@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+//signin or nothing but registering
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -46,7 +47,7 @@ const register = async (req, res) => {
 };
 
 
-
+//login
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -90,7 +91,7 @@ const login = async (req, res) => {
 };
 
 
-
+//logout
 const logout = async (req, res) => {
   res.cookie('token', '', { maxAge: 0 });
   res.status(200).json({ message: 'Logged out successfully' });
