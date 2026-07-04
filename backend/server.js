@@ -16,6 +16,8 @@ app.use(cors({
   credentials: true
 }));
 
+app.use('/api/auth', require('./routes/authRoutes'));
+
 app.get('/', (req, res) => {
   res.json({ message: 'ElevAI server is running' });
 });
