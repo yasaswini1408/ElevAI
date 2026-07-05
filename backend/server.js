@@ -19,6 +19,7 @@ app.use(cors({
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/resume', require('./routes/resumeRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
+app.use('/api/applications', require('./routes/applicationRoutes'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'ElevAI server is running' });
