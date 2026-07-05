@@ -31,4 +31,4 @@ const generateParsingPrompt = (rawResumeText) => {
   `;
 };
 
-module.exports = { generateParsingPrompt };
+module.exports = {generateParsingPrompt};
