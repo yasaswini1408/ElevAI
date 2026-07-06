@@ -144,7 +144,32 @@ const generateShortlistPrompt = (matchPercentage, missingSkills, jobTitle, years
   `;
 };
 
+
+const generateCoverLetterPrompt = (resumeData, jobTitle, company, jobDescription) => {
+  return `
+    You are a professional cover letter writer. Write a cover letter for this candidate.
+    
+    Very important rules:
+    - Return ONLY the cover letter text, nothing else
+    - No markdown, no backticks
+    - Keep it to 3 paragraphs
+    - Make it sound human and genuine, not robotic
+    - Use the candidate's actual experience and skills
+    
+    Candidate Skills: ${resumeData.skills.join(', ')}
+    
+    Candidate Experience: ${JSON.stringify(resumeData.experience)}
+    
+    Candidate Education: ${JSON.stringify(resumeData.education)}
+    
+    Job Title: ${jobTitle}
+    Company: ${company}
+    Job Description: ${jobDescription}
+  `;
+};
+
+
 module.exports = {
   generateParsingPrompt,generateSkillsGapPrompt,generateATSKeywordsPrompt,
-  generateGeneralATSPrompt,generateShortlistPrompt
+  generateGeneralATSPrompt,generateShortlistPrompt,generateCoverLetterPrompt
 };
