@@ -92,11 +92,6 @@ const fetchAndMatchJobs = async (req, res) => {
   } catch (error) {
     console.log('Fetch and match error:', error.message);
     res.status(500).json({ message: 'Something went wrong during job fetching' });
-
-    console.log("Status:", error.response?.status);
-    console.log("Data:", error.response?.data);
-    console.log("Message:", error.message);
-
   }
 };
 
@@ -119,14 +114,6 @@ const addJob = async (req, res) => {
   } catch (error) {
     console.log('Add job error:', error.message);
     res.status(500).json({ message: 'Something went wrong' });
-
-
-
-    console.log("Status:", error.response?.status);
-        console.log("Data:", error.response?.data);
-        console.log("Message:", error.message);
-
-
   }
 };
 
@@ -137,13 +124,6 @@ const getAllJobs = async (req, res) => {
   } catch (error) {
     console.log('Get jobs error:', error.message);
     res.status(500).json({ message: 'Something went wrong' });
-
-
-    console.log("Status:", error.response?.status);
-        console.log("Data:", error.response?.data);
-        console.log("Message:", error.message);
-
-
   }
 };
 
@@ -190,12 +170,7 @@ const matchJobs = async (req, res) => {
 
   } catch (error) {
     console.log('Match jobs error:', error.message);
-    res.status(500).json({ message: 'Something went wrong during matching' });
-
-    console.log("Status:", error.response?.status);
-        console.log("Data:", error.response?.data);
-        console.log("Message:", error.message);
-        
+    res.status(500).json({ message: 'Something went wrong during matching' });        
   }
 };
 
