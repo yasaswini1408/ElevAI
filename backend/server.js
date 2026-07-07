@@ -22,6 +22,10 @@ app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
 app.use('/api/coverletter', require('./routes/coverLetterRoutes'));
 
+// console.log("RapidAPI:", !!process.env.RAPIDAPI_KEY);
+// console.log("Adzuna ID:", !!process.env.ADZUNA_APP_ID);
+// console.log("Adzuna Key:", !!process.env.ADZUNA_APP_KEY);
+
 app.get('/', (req, res) => {
   res.json({ message: 'ElevAI server is running' });
 });

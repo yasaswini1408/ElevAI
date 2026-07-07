@@ -22,10 +22,18 @@ const jobSchema = new mongoose.Schema({
     type: String,
     default: 'Remote'
   },
+  applyLink: {
+    type: String,
+    default: ''
+  },
+  source: {
+    type: String,
+    default: 'Manual'
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('Job',jobSchema);
+module.exports = mongoose.model('Job', jobSchema);
