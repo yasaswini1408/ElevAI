@@ -4,7 +4,7 @@ const fetchFromJSearch = async (skills, location) => {
     console.log('Fetching jobs from JSearch...');
     const query = skills.slice(0, 3).join(' ') + ' developer';
     const response = await axios.get(
-      'https://jsearch.p.rapidapi.com/search',
+      'https://jsearch.p.rapidapi.com/search-v2',
       {
         params: {
           query: query,
@@ -24,7 +24,9 @@ const fetchFromJSearch = async (skills, location) => {
     console.log('JSearch status:', response.status);
     console.log('JSearch data keys:', Object.keys(response.data || {}));
     let rawJobs = [];
-    if (response.data && Array.isArray(response.data.data)) {
+    if (response.data && Array.isArray(response.data.data?.jobs)) {
+      rawJobs = response.data.data.jobs;
+    } else if (response.data && Array.isArray(response.data.data)) {
       rawJobs = response.data.data;
     } else {
       console.log('JSearch unexpected format:', JSON.stringify(response.data).slice(0, 200));
@@ -116,7 +118,7 @@ const fetchFromRemoteOK = async (skills) => {
         const tags = (job.tags || []).map(t => t.toLowerCase());
         return tags.some(tag => skillsLower.some(skill => tag.includes(skill)));
       })
-      .slice(0, 20) 
+      .slice(0, 20)
       .map(job => ({
         title: job.position || '',
         company: job.company || '',
