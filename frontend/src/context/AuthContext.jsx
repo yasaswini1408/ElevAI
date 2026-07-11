@@ -6,8 +6,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  axios.defaults.baseURL = 'http://localhost:5000'
-  axios.defaults.withCredentials = true 
+  axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+  axios.defaults.withCredentials = true
 
   useEffect(() => {
     const savedUser = localStorage.getItem('elevai_user')
