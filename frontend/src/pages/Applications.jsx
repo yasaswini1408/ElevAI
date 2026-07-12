@@ -79,7 +79,6 @@ const Applications = () => {
 
       <div className="max-w-6xl mx-auto px-6 py-8">
 
-        {/* heading */}
         <div className="mb-8">
           <p className="text-[#8B95A3] text-xs uppercase tracking-widest mb-1">
             Tracker
@@ -163,10 +162,10 @@ const Applications = () => {
                   <div className="md:hidden flex flex-col gap-3">
                     <div>
                       <p className="text-[#FAF7F2] text-sm font-medium">
-                        {app.jobId?.title || 'Job'}
+                        {app.jobId?.title || 'Unknown Role'}
                       </p>
                       <p className="text-[#8B95A3] text-xs mt-1">
-                        {app.jobId?.company}
+                        {app.jobId?.company || 'Unknown Company'}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -185,10 +184,10 @@ const Applications = () => {
                   <div className="hidden md:grid grid-cols-4 items-center">
                     <div>
                       <p className="text-[#FAF7F2] text-sm font-medium">
-                        {app.jobId?.title || 'Job'}
+                        {app.jobId?.title || 'Unknown Role'}
                       </p>
                       <p className="text-[#8B95A3] text-xs mt-1">
-                        {app.jobId?.company}
+                        {app.jobId?.company || 'Unknown Company'}
                       </p>
                     </div>
 

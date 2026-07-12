@@ -107,18 +107,21 @@ const getApplications = async (req, res) => {
       .sort({ appliedDate: -1 });
 
     const total = applications.length;
-    const shortlisted = applications.filter(
-      app => app.status === 'Interviewing' || app.status === 'Offer'
-    ).length;
+
+    const interviewing = applications.filter(a => a.status === 'Interviewing').length;
+    const rejected = applications.filter(a => a.status === 'Rejected').length;
+    const offers = applications.filter(a => a.status === 'Offer').length;
+
+    const shortlisted = interviewing + offers;
     const shortlistRate = total > 0 ? Math.round((shortlisted / total) * 100) : 0;
 
     res.status(200).json({
       applications: applications,
       stats: {
         total: total,
-        interviewing: applications.filter(a => a.status === 'Interviewing').length,
-        rejected: applications.filter(a => a.status === 'Rejected').length,
-        offers: applications.filter(a => a.status === 'Offer').length,
+        interviewing: interviewing,
+        rejected: rejected,
+        offers: offers,
         shortlistRate: shortlistRate
       }
     });
@@ -128,7 +131,6 @@ const getApplications = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong' });
   }
 };
-
 
 const updateStatus = async (req, res) => {
   try {

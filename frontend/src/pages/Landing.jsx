@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import Logo from '../components/Logo'
 
 const FeatureIcon = ({ icon }) => (
   <div style={{ width: '48px', height: '48px', background: '#1A2B10', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
@@ -12,16 +13,25 @@ const Landing = () => {
   return (
     <div style={{ background: '#0A0A0F', minHeight: '100vh', fontFamily: 'Inter, -apple-system, sans-serif', color: '#F0F0F5', overflowX: 'hidden' }}>
 
-      {/* navbar */}
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 60px', borderBottom: '1px solid #1A1A2A' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '36px', height: '36px', background: '#B8FF3F', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '17px', color: '#0A0A0F', fontFamily: 'monospace' }}>E</div>
-          <span style={{ fontSize: '17px', fontWeight: '600', letterSpacing: '-0.3px' }}>ElevAI</span>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Logo size={38} />
+          <div>
+            <div style={{ fontSize: '16px', fontWeight: '700', letterSpacing: '-0.3px', color: '#F0F0F5', lineHeight: '1.2' }}>
+              Elev<span style={{ color: '#4A90D9' }}>AI</span>
+            </div>
+            <div style={{ fontSize: '9px', color: '#6B7280', letterSpacing: '0.06em' }}>
+              ELEVATE YOUR CAREER
+            </div>
+          </div>
         </div>
+
         <div style={{ display: 'flex', gap: '36px', fontSize: '14px', color: '#6B7280' }}>
           <a href="#features" style={{ color: '#6B7280', textDecoration: 'none', cursor: 'pointer' }}>Features</a>
           <a href="#howitworks" style={{ color: '#6B7280', textDecoration: 'none', cursor: 'pointer' }}>How it works</a>
         </div>
+
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button
             onClick={() => navigate('/login')}
@@ -149,12 +159,9 @@ const Landing = () => {
         <p style={{ fontSize: '13px', color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center', margin: '0 0 54px' }}>
           How it works
         </p>
-
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0px', position: 'relative' }}>
-
             <div style={{ position: 'absolute', top: '28px', left: '12.5%', right: '12.5%', height: '2px', background: '#2D2D3A', zIndex: 0 }}></div>
-
             {[
               { step: '01', icon: 'ti-file-upload', title: 'Upload resume', desc: 'Drop your PDF. AI extracts your skills, experience and education automatically.' },
               { step: '02', icon: 'ti-world-search', title: 'We search', desc: 'ElevAI searches JSearch, Adzuna and RemoteOK for real live openings right now.' },
@@ -194,7 +201,7 @@ const Landing = () => {
 
       <div style={{ padding: '24px 60px 32px', borderTop: '1px solid #1A1A2A', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '24px', height: '24px', background: '#B8FF3F', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '12px', color: '#0A0A0F', fontFamily: 'monospace' }}>E</div>
+          <Logo size={24} />
           <span style={{ fontSize: '13px', color: '#4B5563' }}>ElevAI — Designed & Built by Yasaswini</span>
         </div>
         <span style={{ fontSize: '13px', color: '#374151' }}>© 2026 Yasaswini. All rights reserved.</span>
