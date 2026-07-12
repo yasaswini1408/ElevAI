@@ -7,7 +7,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await logout()
-    navigate('/login')
+    navigate('/')
   }
 
   const getInitials = (name) => {
@@ -31,28 +31,19 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          <Link
-            to="/dashboard"
-            className="text-[#FAF7F2] text-sm hover:text-[#D4FF4F] transition-colors"
-          >
+          <Link to="/dashboard" className="text-[#FAF7F2] text-sm hover:text-[#D4FF4F] transition-colors">
             Dashboard
           </Link>
-          <Link
-            to="/matches"
-            className="text-[#8B95A3] text-sm hover:text-[#FAF7F2] transition-colors"
-          >
+          <Link to="/matches" className="text-[#8B95A3] text-sm hover:text-[#FAF7F2] transition-colors">
             Job Matches
           </Link>
-          <Link
-            to="/applications"
-            className="text-[#8B95A3] text-sm hover:text-[#FAF7F2] transition-colors"
-          >
+          <Link to="/applications" className="text-[#8B95A3] text-sm hover:text-[#FAF7F2] transition-colors">
             Applications
           </Link>
-          <Link
-            to="/resume"
-            className="text-[#8B95A3] text-sm hover:text-[#FAF7F2] transition-colors"
-          >
+          <Link to="/ats" className="text-[#8B95A3] text-sm hover:text-[#FAF7F2] transition-colors">
+            ATS Check
+          </Link>
+          <Link to="/resume" className="text-[#8B95A3] text-sm hover:text-[#FAF7F2] transition-colors">
             Resume
           </Link>
         </div>
