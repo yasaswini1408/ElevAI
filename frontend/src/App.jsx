@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard'
 import JobMatches from './pages/JobMatches'
 import Applications from './pages/Applications'
 import ATS from './pages/ATS'
+import Resume from './pages/Resume'
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
@@ -36,7 +37,7 @@ const AppRoutes = () => {
       <Route path="/matches" element={<ProtectedRoute><JobMatches /></ProtectedRoute>} />
       <Route path="/applications" element={<ProtectedRoute><Applications /></ProtectedRoute>} />
       <Route path="/ats" element={<ProtectedRoute><ATS /></ProtectedRoute>} />
-
+      <Route path="/resume" element={<ProtectedRoute><Resume /></ProtectedRoute>} />
       <Route path="/" element={<Navigate to="/dashboard" />} />
     </Routes>
   )

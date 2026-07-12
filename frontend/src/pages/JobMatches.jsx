@@ -145,7 +145,7 @@ const JobMatches = () => {
                         via {job.source || 'Manual'}
                       </span>
                     </div>
-                    <div className={`${getScoreBg(job.matchPercentage)} px-3 py-1 rounded-lg flex-shrink-0`}>
+                    <div className={`${getScoreBg(job.matchPercentage)} px-3 py-1 rounded-lg flex-shrink:0`}>
                       <span className={`font-mono text-sm font-bold ${getScoreColor(job.matchPercentage)}`}>
                         {job.matchPercentage}%
                       </span>
