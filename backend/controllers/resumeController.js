@@ -30,7 +30,9 @@ const uploadResume = async (req, res) => {
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.1
     });
-    console.log('ATS raw response:', aiText);
+
+    const aiText = aiResponse.choices[0].message.content;
+    console.log('Groq raw response:', aiText);
 
     const aiText = aiResponse.choices[0].message.content;
     console.log('Groq raw response:', aiText);
@@ -124,6 +126,8 @@ const getATSKeywords = async (req, res) => {
     });
 
     const aiText = aiResponse.choices[0].message.content;
+    console.log('Groq raw response:', aiText);
+    
     let atsResult;
     try {
       const cleanedAiText = aiText.replace(/```json|```/g, '').trim();
@@ -145,4 +149,4 @@ const getATSKeywords = async (req, res) => {
   }
 };
 
-module.exports = {uploadResume,getResume,getATSKeywords};
+module.exports = { uploadResume, getResume, getATSKeywords };
