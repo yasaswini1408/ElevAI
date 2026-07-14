@@ -34,8 +34,6 @@ const uploadResume = async (req, res) => {
     const aiText = aiResponse.choices[0].message.content;
     console.log('Groq raw response:', aiText);
 
-    const aiText = aiResponse.choices[0].message.content;
-    console.log('Groq raw response:', aiText);
     let parsedData;
     try {
       const cleanedAiText = aiText.replace(/```json|```/g, '').trim();
@@ -127,7 +125,7 @@ const getATSKeywords = async (req, res) => {
 
     const aiText = aiResponse.choices[0].message.content;
     console.log('Groq raw response:', aiText);
-    
+
     let atsResult;
     try {
       const cleanedAiText = aiText.replace(/```json|```/g, '').trim();
