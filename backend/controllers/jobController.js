@@ -3,6 +3,16 @@ const Resume = require('../models/Resume');
 const { generateEmbedding } = require('../utils/embeddingHelper');
 const { fetchJobsFromAllSources } = require('../utils/jobFetcher');
 
+const isFresherFriendly = (job) => {
+  const seniorKeywords = [
+    'senior', 'sr.', 'lead', 'principal', 'head of',
+    'director', 'manager', 'architect', '5+ years',
+    '6+ years', '7+ years', '8+ years', '10+ years'
+  ]
+  const titleAndDesc = `${job.title} ${job.description}`.toLowerCase()
+  return !seniorKeywords.some(keyword => titleAndDesc.includes(keyword))
+}
+
 const fetchAndMatchJobs = async (req, res) => {
   try {
     const resume = await Resume.findOne({ userId: req.user.id })
@@ -17,8 +27,10 @@ const fetchAndMatchJobs = async (req, res) => {
     if (skills.length === 0) {
       return res.status(400).json({ message: 'No skills found in resume' });
     }
+
     console.log('Starting job fetch for skills:', skills.slice(0, 5));
     const fetchedJobs = await fetchJobsFromAllSources(skills, 'India');
+
     if (fetchedJobs.length === 0) {
       return res.status(404).json({ message: 'No jobs found right now, try again later' });
     }
@@ -29,10 +41,14 @@ const fetchAndMatchJobs = async (req, res) => {
       job.description.length > 50
     );
     console.log(`Valid jobs after filtering: ${validJobs.length}`);
+
+    const fresherJobs = validJobs.filter(job => isFresherFriendly(job))
+    console.log(`After fresher filter: ${fresherJobs.length} jobs`)
+
     console.log('Generating embeddings for new jobs...');
 
     const savedJobs = [];
-    for (const jobData of validJobs.slice(0, 30)) {
+    for (const jobData of fresherJobs.slice(0, 30)) {
       const exists = await Job.findOne({
         title: jobData.title,
         company: jobData.company
@@ -41,6 +57,7 @@ const fetchAndMatchJobs = async (req, res) => {
       if (!exists) {
         const textForEmbedding = `${jobData.title} ${jobData.requirements.join(' ')} ${jobData.description}`;
         const jobEmbedding = await generateEmbedding(textForEmbedding);
+
         const newJob = await Job.create({
           title: jobData.title,
           company: jobData.company,
@@ -49,13 +66,20 @@ const fetchAndMatchJobs = async (req, res) => {
           location: jobData.location,
           applyLink: jobData.applyLink || '',
           source: jobData.source,
-          jobEmbedding: jobEmbedding
+          jobEmbedding: jobEmbedding,
+          fetchedBy: [req.user.id]
         });
         savedJobs.push(newJob);
+      } else {
+        await Job.findByIdAndUpdate(exists._id, {
+          $addToSet: { fetchedBy: req.user.id }
+        });
       }
     }
 
     console.log(`Saved ${savedJobs.length} new jobs to database`);
+
+
     const matches = await Job.aggregate([
       {
         $vectorSearch: {
@@ -72,11 +96,17 @@ const fetchAndMatchJobs = async (req, res) => {
         }
       },
       {
+        $match: {
+          fetchedBy: req.user.id
+        }
+      },
+      {
         $project: {
           jobEmbedding: 0
         }
       }
     ]);
+
     const matchesWithPercentage = matches.map(job => ({
       ...job,
       matchPercentage: Math.round(job.matchScore * 100)
@@ -110,16 +140,17 @@ const addJob = async (req, res) => {
       message: 'Job added successfully',
       jobId: job._id
     });
-
   } catch (error) {
     console.log('Add job error:', error.message);
     res.status(500).json({ message: 'Something went wrong' });
   }
 };
 
+
+
 const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find().select('-jobEmbedding');
+    const jobs = await Job.find({ fetchedBy: req.user.id }).select('-jobEmbedding')
     res.status(200).json({ jobs });
   } catch (error) {
     console.log('Get jobs error:', error.message);
@@ -153,6 +184,11 @@ const matchJobs = async (req, res) => {
         }
       },
       {
+        $match: {
+          fetchedBy: resume.userId
+        }
+      },
+      {
         $project: {
           jobEmbedding: 0
         }
@@ -163,14 +199,14 @@ const matchJobs = async (req, res) => {
       ...job,
       matchPercentage: Math.round(job.matchScore * 100)
     }));
+
     res.status(200).json({
       message: 'Jobs matched successfully',
       matches: matchesWithPercentage
     });
-
   } catch (error) {
     console.log('Match jobs error:', error.message);
-    res.status(500).json({ message: 'Something went wrong during matching' });        
+    res.status(500).json({ message: 'Something went wrong during matching' });
   }
 };
 

@@ -60,33 +60,40 @@ const generateSkillsGapPrompt = (resumeSkills, jobRequirements, jobTitle) => {
 
 const generateATSKeywordsPrompt = (resumeText, jobDescription, jobTitle) => {
   return `
-    You are an ATS (Applicant Tracking System) expert. 
-    Find important keywords and phrases from the job description that are missing from the resume.
+    You are an expert ATS (Applicant Tracking System) analyst.
+    
+    Your job is to carefully compare the resume text against the job description and find SPECIFIC keywords and phrases that:
+    1. Appear in the job description as requirements
+    2. Are completely absent from the resume text
     
     Very important rules:
     - Return ONLY the JSON object, nothing else
-    - No markdown, no backticks, no explanation text
-    - Focus on exact phrases ATS systems look for, not just skills
-    - Include soft skills phrases, technical terms, and industry keywords
+    - No markdown, no backticks, no explanation
+    - Be very specific — only list keywords that are genuinely missing
+    - Do not list skills the candidate already has
+    - Focus on exact phrases ATS systems match on
+    - The coveragePercentage should reflect how many of the job's key requirements are already in the resume
     
     Job Title: ${jobTitle}
     
-    Resume Text: ${resumeText}
+    Job Description:
+    ${jobDescription}
     
-    Job Description: ${jobDescription}
+    Resume Text:
+    ${resumeText}
     
     Return exactly this structure:
     {
       "missingKeywords": [
         {
-          "keyword": "exact phrase to add",
-          "reason": "why this keyword matters for ATS"
+          "keyword": "exact phrase missing from resume",
+          "reason": "why this specific keyword matters for this job"
         }
       ],
       "coveragePercentage": 75
     }
-  `;
-};
+  `
+}
 
 
 
