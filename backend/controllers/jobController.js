@@ -96,11 +96,6 @@ const fetchAndMatchJobs = async (req, res) => {
         }
       },
       {
-        $match: {
-          fetchedBy: req.user.id
-        }
-      },
-      {
         $project: {
           jobEmbedding: 0
         }
