@@ -176,7 +176,36 @@ const generateCoverLetterPrompt = (resumeData, jobTitle, company, jobDescription
 };
 
 
+const generateExperienceLevelPrompt = (resumeText, experience) => {
+  return `
+    You are a resume analyst. Based on the resume text and experience below, classify this candidate.
+    
+    Very important rules:
+    - Return ONLY the JSON object, nothing else
+    - No markdown, no backticks, no explanation
+    
+    Experience entries: ${JSON.stringify(experience)}
+    
+    Resume Text: ${resumeText.substring(0, 3000)}
+    
+    Return exactly this structure:
+    {
+      "level": "fresher",
+      "totalMonths": 0,
+      "reasoning": "one line explanation"
+    }
+    
+    Rules for level:
+    - "fresher" = student, no work experience, only internships under 6 months
+    - "junior" = 6 months to 2 years of work experience
+    - "experienced" = more than 2 years of work experience
+    
+    Be accurate — look at actual job durations not just number of entries.
+  `
+}
+
+
 module.exports = {
   generateParsingPrompt,generateSkillsGapPrompt,generateATSKeywordsPrompt,
-  generateGeneralATSPrompt,generateShortlistPrompt,generateCoverLetterPrompt
+  generateGeneralATSPrompt,generateShortlistPrompt,generateCoverLetterPrompt,generateExperienceLevelPrompt
 };

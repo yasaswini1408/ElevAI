@@ -2,15 +2,70 @@ const Job = require('../models/Job');
 const Resume = require('../models/Resume');
 const { generateEmbedding } = require('../utils/embeddingHelper');
 const { fetchJobsFromAllSources } = require('../utils/jobFetcher');
+const { groq } = require('../config/aiConfig');
+const { generateExperienceLevelPrompt } = require('../utils/aiPrompts');
 
-const isFresherFriendly = (job) => {
+const getExperienceLevel = async (resume) => {
+  try {
+    const prompt = generateExperienceLevelPrompt(
+      resume.rawText,
+      resume.parsedData?.experience || []
+    )
+
+    const aiResponse = await groq.chat.completions.create({
+      model: 'llama-3.1-8b-instant',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.1
+    })
+
+    const aiText = aiResponse.choices[0].message.content
+    const cleaned = aiText.replace(/```json|```/g, '').trim()
+    const result = JSON.parse(cleaned)
+
+    console.log(`AI detected experience level: ${result.level} — ${result.reasoning}`)
+    return result.level
+
+  } catch (error) {
+    console.log('Experience detection error:', error.message)
+    return 'fresher' 
+  }
+}
+
+const isJobSuitable = (job, experienceLevel) => {
+  const titleAndDesc = `${job.title} ${job.description}`.toLowerCase()
+
   const seniorKeywords = [
     'senior', 'sr.', 'lead', 'principal', 'head of',
     'director', 'manager', 'architect', '5+ years',
     '6+ years', '7+ years', '8+ years', '10+ years'
   ]
-  const titleAndDesc = `${job.title} ${job.description}`.toLowerCase()
-  return !seniorKeywords.some(keyword => titleAndDesc.includes(keyword))
+
+  const fresherKeywords = [
+    'fresher', 'fresh graduate', '0-1 year', 'entry level',
+    'no experience required', 'trainee', 'apprentice'
+  ]
+
+  const internKeywords = [
+    'intern', 'internship', 'student'
+  ]
+
+  const isSenior = seniorKeywords.some(k => titleAndDesc.includes(k))
+  const isFresher = fresherKeywords.some(k => titleAndDesc.includes(k))
+  const isIntern = internKeywords.some(k => titleAndDesc.includes(k))
+
+  if (experienceLevel === 'fresher') {
+    return !isSenior
+  }
+
+  if (experienceLevel === 'junior') {
+    return !isSenior && !isIntern
+  }
+
+  if (experienceLevel === 'experienced') {
+    return !isFresher && !isIntern
+  }
+
+  return true
 }
 
 const fetchAndMatchJobs = async (req, res) => {
@@ -29,8 +84,11 @@ const fetchAndMatchJobs = async (req, res) => {
     }
 
     console.log('Starting job fetch for skills:', skills.slice(0, 5));
-    const fetchedJobs = await fetchJobsFromAllSources(skills, 'India');
 
+    const experienceLevel = await getExperienceLevel(resume)
+    console.log(`Experience level detected: ${experienceLevel}`)
+
+    const fetchedJobs = await fetchJobsFromAllSources(skills, 'India');
     if (fetchedJobs.length === 0) {
       return res.status(404).json({ message: 'No jobs found right now, try again later' });
     }
@@ -42,13 +100,13 @@ const fetchAndMatchJobs = async (req, res) => {
     );
     console.log(`Valid jobs after filtering: ${validJobs.length}`);
 
-    const fresherJobs = validJobs.filter(job => isFresherFriendly(job))
-    console.log(`After fresher filter: ${fresherJobs.length} jobs`)
+    const suitableJobs = validJobs.filter(job => isJobSuitable(job, experienceLevel))
+    console.log(`After experience filter: ${suitableJobs.length} jobs`)
 
     console.log('Generating embeddings for new jobs...');
 
     const savedJobs = [];
-    for (const jobData of fresherJobs.slice(0, 30)) {
+    for (const jobData of suitableJobs.slice(0, 10)) {
       const exists = await Job.findOne({
         title: jobData.title,
         company: jobData.company
@@ -78,7 +136,6 @@ const fetchAndMatchJobs = async (req, res) => {
     }
 
     console.log(`Saved ${savedJobs.length} new jobs to database`);
-
 
     const matches = await Job.aggregate([
       {
@@ -111,6 +168,7 @@ const fetchAndMatchJobs = async (req, res) => {
       message: 'Jobs fetched and matched successfully',
       totalFetched: fetchedJobs.length,
       newJobsSaved: savedJobs.length,
+      experienceLevel: experienceLevel,
       matches: matchesWithPercentage
     });
 
@@ -140,7 +198,6 @@ const addJob = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong' });
   }
 };
-
 
 
 const getAllJobs = async (req, res) => {
@@ -176,11 +233,6 @@ const matchJobs = async (req, res) => {
       {
         $addFields: {
           matchScore: { $meta: 'vectorSearchScore' }
-        }
-      },
-      {
-        $match: {
-          fetchedBy: resume.userId
         }
       },
       {
